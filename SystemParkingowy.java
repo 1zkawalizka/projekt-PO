@@ -5,8 +5,8 @@ import java.time.Duration;
 import java.util.Scanner;
 
 public class SystemParkingowy {
-    private List<Pojazd> pojazdy;
-    private LocalDateTime aktualnyCzas;
+    private List<Pojazd> pojazdy; // DS
+    private LocalDateTime aktualnyCzas; // DS
 
     public SystemParkingowy() {
         // Damian Sadowski - Poczatek kodu
@@ -115,8 +115,6 @@ public class SystemParkingowy {
 
 
     public static void main(String[] args) {
-
-        // Damian Sadowski - Poczatek Kodu
         SystemParkingowy systemParkingowy = new SystemParkingowy();
         Scanner scanner = new Scanner(System.in);
         int wybor;
@@ -158,15 +156,7 @@ public class SystemParkingowy {
                     break;
             }
         }while(wybor != 0);
-        // Damian Sadowski - Koniec Kodu
-
-        System.out.println("Lista samochodów na parkingu:");
-        for (Pojazd pojazd : systemParkingowy.pojazdy) {
-            if (pojazd instanceof Samochod) {
-                System.out.println("- " + pojazd.getNumerRejestracyjny() + " | " + pojazd.getMarka() + " " + pojazd.getModel());
-            }
-        }
-
+        
         scanner.close();
     }
 }
