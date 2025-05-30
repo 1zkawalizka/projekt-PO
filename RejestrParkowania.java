@@ -15,11 +15,6 @@ public class RejestrParkowania {
         this.oplata = pojazd.getOplata();
     }
 
-    public Duration pobierzCzasPostoju(){
-        Duration czasPostoju = Duration.between(czasWjazdu, czasWyjazdu);
-        return czasPostoju;
-    }
-
     public static void main(String[] args) {
     }
 }

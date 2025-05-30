@@ -1,3 +1,5 @@
+import java.time.LocalDateTime;
+
 public class Samochod extends Pojazd
 {
     private boolean czyMaLPG;
