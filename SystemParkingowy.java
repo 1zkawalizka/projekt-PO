@@ -156,7 +156,8 @@ public class SystemParkingowy {
                     break;
             }
         }while(wybor != 0);
-        
+
+
         scanner.close();
     }
 }
