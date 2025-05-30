@@ -11,14 +11,57 @@ public class SystemParkingowy {
     public SystemParkingowy() {
         // Damian Sadowski - Poczatek kodu
         this.pojazdy = new ArrayList<>();
-        this.aktualnyCzas = LocalDateTime.of(2025, 6, 1, 15, 25, 0); // LocalDateTime.of(rok, miesiac, dzien, godzina, minuta, sekunda)
+        this.aktualnyCzas = LocalDateTime.of(2025, 1, 1, 0, 0, 0); // LocalDateTime.of(rok, miesiac, dzien, godzina, minuta, sekunda)
         // Damian Sadowski - Koniec kodu
     }
 
     // Damian Sadowski - Poczatek kodu
-    public void zarejestrujWjazd(Pojazd pojazd){
-        pojazd = new Samochod(pojazd.getNumerRejestracyjny(), pojazd.getMarka(), pojazd.getModel(), LocalDateTime.of(2025, 6, 1, 15, 25, 0), true, 5);
-        pojazdy.add(pojazd);
+    public void zarejestrujWjazd(){
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Typ pojazdu \n 1. Samochod osobowy \n 2. Ciezarowka \n 3. Motocykl");
+        int typPojazdu = scanner.nextInt();
+
+        System.out.println("Numer Rejestracyjny Pojazdu: ");
+        String nrRejestracyjny = scanner.next();
+
+        System.out.println("Marka pojazdu: ");
+        String markaPojazdu = scanner.next();
+
+        System.out.println("Model pojazdu: ");
+        String modelPojazdu = scanner.next();
+
+        switch(typPojazdu){
+            case 1:
+                System.out.println("Czy posiada LPG? true/false");
+                boolean czyMaLPG = scanner.nextBoolean();
+
+                System.out.println("Ilu osobowy? ");
+                int iluOsobowy = scanner.nextInt();
+
+                Pojazd pojazd = new Samochod(nrRejestracyjny, markaPojazdu, modelPojazdu, aktualnyCzas, czyMaLPG, iluOsobowy);
+                pojazdy.add(pojazd);
+                break;
+            case 2:
+                System.out.println("Jaka wysokosc w cm? ");
+                double wysokosc = scanner.nextDouble();
+
+                System.out.println("Jaka ladownosc? ");
+                double ladownosc = scanner.nextDouble();
+
+                pojazd = new Ciezarowka(nrRejestracyjny, markaPojazdu, modelPojazdu, aktualnyCzas, wysokosc, ladownosc);
+                pojazdy.add(pojazd);
+                break;
+            case 3:
+                System.out.println("Pojemnosc silnika: ");
+                int pojemnoscSilnika = scanner.nextInt();
+
+                System.out.println("Typ? cross/sportowy/scigacz");
+                String typ = scanner.next();
+
+                pojazd = new Motocykl(nrRejestracyjny,markaPojazdu, modelPojazdu, aktualnyCzas, pojemnoscSilnika, typ);
+                pojazdy.add(pojazd);
+                break;
+        }
     }
 
     public double zarejestrujWyjazd(String nrRejestracyjny){
@@ -67,7 +110,6 @@ public class SystemParkingowy {
             default:
                 System.out.printf("Podano nieprawidlowo cos");
         }
-        scanner.close();
     }
     // Damian Sadowski - Koniec kodu
 
@@ -91,8 +133,12 @@ public class SystemParkingowy {
             wybor = scanner.nextInt();
             switch (wybor){
                 case 1:
+                    systemParkingowy.zarejestrujWjazd();
                     break;
                 case 2:
+                    System.out.println("Podaj Numer Rejestracyjny: ");
+                    String numerRejestracyjny = scanner.next();
+                    systemParkingowy.zarejestrujWyjazd(numerRejestracyjny);
                     break;
                 case 3:
                     break;
@@ -101,6 +147,7 @@ public class SystemParkingowy {
                 case 5:
                     break;
                 case 6:
+                    systemParkingowy.przesunCzas();
                     break;
                 case 7:
                     break;
@@ -112,5 +159,14 @@ public class SystemParkingowy {
             }
         }while(wybor != 0);
         // Damian Sadowski - Koniec Kodu
+
+        System.out.println("Lista samochodów na parkingu:");
+        for (Pojazd pojazd : systemParkingowy.pojazdy) {
+            if (pojazd instanceof Samochod) {
+                System.out.println("- " + pojazd.getNumerRejestracyjny() + " | " + pojazd.getMarka() + " " + pojazd.getModel());
+            }
+        }
+
+        scanner.close();
     }
 }
