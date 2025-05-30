@@ -41,41 +41,76 @@ public class SystemParkingowy {
         int oIleJednostek = scanner.nextInt();
         switch (wyborJednostkiCzasu){
             case 1:
-                System.out.println(aktualnyCzas + "-> + " + oIleJednostek + " Lat -> " + aktualnyCzas.plusYears(oIleJednostek));
+                System.out.println(aktualnyCzas + " -> + " + oIleJednostek + " Lat -> " + aktualnyCzas.plusYears(oIleJednostek));
                 aktualnyCzas = aktualnyCzas.plusYears(oIleJednostek);
                 break;
             case 2:
-                System.out.println(aktualnyCzas + "-> + " + oIleJednostek + " Miesiecy -> " + aktualnyCzas.plusMonths(oIleJednostek));
+                System.out.println(aktualnyCzas + " -> + " + oIleJednostek + " Miesiecy -> " + aktualnyCzas.plusMonths(oIleJednostek));
                 aktualnyCzas = aktualnyCzas.plusMonths(oIleJednostek);
                 break;
             case 3:
-                System.out.println(aktualnyCzas + "-> + " + oIleJednostek + " Dni-> " + aktualnyCzas.plusDays(oIleJednostek));
+                System.out.println(aktualnyCzas + " -> + " + oIleJednostek + " Dni-> " + aktualnyCzas.plusDays(oIleJednostek));
                 aktualnyCzas = aktualnyCzas.plusDays(oIleJednostek);
                 break;
             case 4:
-                System.out.println(aktualnyCzas + "-> + " + oIleJednostek + " Godzin -> " + aktualnyCzas.plusHours(oIleJednostek));
+                System.out.println(aktualnyCzas + " -> + " + oIleJednostek + " Godzin -> " + aktualnyCzas.plusHours(oIleJednostek));
                 aktualnyCzas = aktualnyCzas.plusHours(oIleJednostek);
                 break;
             case 5:
-                System.out.println(aktualnyCzas + "-> + " + oIleJednostek + " Minut -> " + aktualnyCzas.plusMinutes(oIleJednostek));
+                System.out.println(aktualnyCzas + " -> + " + oIleJednostek + " Minut -> " + aktualnyCzas.plusMinutes(oIleJednostek));
                 aktualnyCzas = aktualnyCzas.plusMinutes(oIleJednostek);
                 break;
             case 6:
-                System.out.println(aktualnyCzas + "-> + " + oIleJednostek + " Sekund -> " + aktualnyCzas.plusSeconds(oIleJednostek));
+                System.out.println(aktualnyCzas + " -> + " + oIleJednostek + " Sekund -> " + aktualnyCzas.plusSeconds(oIleJednostek));
                 aktualnyCzas = aktualnyCzas.plusSeconds(oIleJednostek);
                 break;
             default:
                 System.out.printf("Podano nieprawidlowo cos");
         }
+        scanner.close();
     }
     // Damian Sadowski - Koniec kodu
 
 
     public static void main(String[] args) {
+
         // Damian Sadowski - Poczatek Kodu
         SystemParkingowy systemParkingowy = new SystemParkingowy();
-        systemParkingowy.przesunCzas();
-        systemParkingowy.przesunCzas();
+        Scanner scanner = new Scanner(System.in);
+        int wybor;
+        do{
+            System.out.println("Co chcesz zrobic? \n " +
+                    "1. Wjazd \n " +
+                    "2. Wyjazd \n " +
+                    "3. Sprawdz Dostepnosc \n " +
+                    "4. Lista aktualnych pojazdow \n " +
+                    "5. Generuj raport dzienny \n " +
+                    "6. Przesun czas symulacji \n " +
+                    "7. Historia pojazdow \n " +
+                    "0. Wyjdz");
+            wybor = scanner.nextInt();
+            switch (wybor){
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    break;
+                case 6:
+                    break;
+                case 7:
+                    break;
+                case 0:
+                    break;
+                default:
+                    System.out.printf("Podano nieprawidlowo cos");
+                    break;
+            }
+        }while(wybor != 0);
         // Damian Sadowski - Koniec Kodu
     }
 }
