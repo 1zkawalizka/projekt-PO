@@ -15,6 +15,23 @@ public class RejestrParkowania {
         this.oplata = pojazd.getOplata();
     }
 
+
+    public Pojazd getPojazd() {
+        return pojazd;
+    }
+
+    public LocalDateTime getCzasWjazdu() {
+        return czasWjazdu;
+    }
+
+    public LocalDateTime getCzasWyjazdu() {
+        return czasWyjazdu;
+    }
+
+    public double getOplata() {
+        return oplata;
+    }
+
     public static void main(String[] args) {
     }
 }
