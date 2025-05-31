@@ -29,27 +29,31 @@ import java.util.Scanner;
                         System.out.print("Typ pojazdu: \n 1. Samochod osobowy | 2. Ciezarowka | 3. Motocykl : ");
                         int typPojazdu = scanner.nextInt();
                         if(!(typPojazdu == 1 || typPojazdu == 2 || typPojazdu == 3)){
-                            throw new PodanoNiepoprawneDaneLubPusty("ERROR: wybrano niewlasciwy typ pojazdu, wybierz pojazd z zakresu 1-3. ");
+                            throw new PodanoNiepoprawneDaneLubPusty("ERROR: wybrano niewlasciwy typ pojazdu, wybierz pojazd z zakresu 1-3. \n");
                         }
+                        scanner.nextLine(); // usuwamy z buforu /n
 
                         System.out.print("Numer Rejestracyjny Pojazdu: ");
-                        String nrRejestracyjny = scanner.next();
+                        String nrRejestracyjny = scanner.nextLine();
+                        if(nrRejestracyjny.length() < 2){
+                            throw new PodanoNiepoprawneDaneLubPusty("ERROR: podano niepoprawny numer rejestarcyjny (zbyt krotki) \n");
+                        }
                         for(Pojazd pojazd : pojazdy){
                             if(pojazd.getNumerRejestracyjny().equals(nrRejestracyjny)){
-                                throw new TakaRejestracjaJestJuzNaParkingu("ERROR: Samochod o takim numerze rejestracyjnym znajduje sie juz na parkingu, prosimy o zawolwanie obslugi. ");
+                                throw new TakaRejestracjaJestJuzNaParkingu("ERROR: Samochod o takim numerze rejestracyjnym znajduje sie juz na parkingu, prosimy o zawolwanie obslugi. \n");
                             }
                         }
 
                         System.out.print("Marka pojazdu: ");
-                        String markaPojazdu = scanner.next();
+                        String markaPojazdu = scanner.nextLine();
                         if(markaPojazdu.isEmpty()){
-                            throw new PodanoNiepoprawneDaneLubPusty("ERROR: Marka pojazdu nie moze byc pusta. ");
+                            throw new PodanoNiepoprawneDaneLubPusty("ERROR: Marka pojazdu nie moze byc pusta. \n");
                         }
 
                         System.out.print("Model pojazdu: ");
-                        String modelPojazdu = scanner.next();
+                        String modelPojazdu = scanner.nextLine();
                         if(modelPojazdu.isEmpty()){
-                            throw new PodanoNiepoprawneDaneLubPusty("ERROR: Model pojazdu nie moze byc pusty. ");
+                            throw new PodanoNiepoprawneDaneLubPusty("ERROR: Model pojazdu nie moze byc pusty. \n");
                         }
 
                         switch (typPojazdu) {
@@ -59,6 +63,9 @@ import java.util.Scanner;
 
                                 System.out.print("Ilu osobowy? ");
                                 int iluOsobowy = scanner.nextInt();
+                                if(iluOsobowy <=0){
+                                    throw new PodanoNiepoprawneDaneLubPusty("ERROR: Wprowadzono nieprawidlowa ilosc miejsc. \n");
+                                }
 
                                 Pojazd pojazd = new Samochod(nrRejestracyjny, markaPojazdu, modelPojazdu, aktualnyCzas, czyMaLPG, iluOsobowy);
                                 pojazdy.add(pojazd);
@@ -66,9 +73,15 @@ import java.util.Scanner;
                             case 2:
                                 System.out.print("Jaka wysokosc w cm? ");
                                 double wysokosc = scanner.nextDouble();
+                                if(wysokosc <=0){
+                                    throw new PodanoNiepoprawneDaneLubPusty("ERROR: Wprowadzono nieprawidlowa wysokosc. \n");
+                                }
 
                                 System.out.print("Jaka ladownosc? ");
                                 double ladownosc = scanner.nextDouble();
+                                if(ladownosc<=0){
+                                    throw new PodanoNiepoprawneDaneLubPusty("ERROR: Wprowadzono nieprawidlowa ladownosc. \n");
+                                }
 
                                 pojazd = new Ciezarowka(nrRejestracyjny, markaPojazdu, modelPojazdu, aktualnyCzas, wysokosc, ladownosc);
                                 pojazdy.add(pojazd);
@@ -76,9 +89,16 @@ import java.util.Scanner;
                             case 3:
                                 System.out.print("Pojemnosc silnika: ");
                                 int pojemnoscSilnika = scanner.nextInt();
+                                if(pojemnoscSilnika <=0){
+                                    throw new PodanoNiepoprawneDaneLubPusty("ERROR: Wprowadzono nieprawidlowa pojemnosc silnika. \n");
+                                }
+                                scanner.nextLine(); // usuwanie /n z buforu
 
                                 System.out.print("Typ? cross/sportowy/scigacz: ");
-                                String typ = scanner.next();
+                                String typ = scanner.nextLine();
+                                if(!(typ.equals("cross") || typ.equals("sportowy") || typ.equals("scigacz"))){
+                                    throw new PodanoNiepoprawneDaneLubPusty("ERROR: Wprowadzono nieprawidlowy typ motocyklu, cross/sportowy/scigacz. \n");
+                                }
 
                                 pojazd = new Motocykl(nrRejestracyjny, markaPojazdu, modelPojazdu, aktualnyCzas, pojemnoscSilnika, typ);
                                 pojazdy.add(pojazd);
@@ -86,7 +106,7 @@ import java.util.Scanner;
                         }
                     }
                     else{
-                        throw new BrakMiejscaNaParkingu("ERROR: Brak miejsc na parkingu sprobuj ponownie pozniej. ");
+                        throw new BrakMiejscaNaParkingu("ERROR: Brak miejsc na parkingu sprobuj ponownie pozniej. \n");
                     }
                 }
                 catch(BrakMiejscaNaParkingu error){
@@ -101,14 +121,22 @@ import java.util.Scanner;
             }
 
             public double zarejestrujWyjazd(String nrRejestracyjny){
-                for (Pojazd pojazd : pojazdy) {
-                    if (pojazd.getNumerRejestracyjny().equals(nrRejestracyjny)) {
-                        pojazd.wyjazdCzas(aktualnyCzas);
-                        double oplata = pojazd.getOplata();
-                        pojazdy.remove(pojazd);
-                        return oplata;
+                try {
+                    for (Pojazd pojazd : pojazdy) {
+                        if (pojazd.getNumerRejestracyjny().equals(nrRejestracyjny)) {
+                            pojazd.wyjazdCzas(aktualnyCzas);
+                            double oplata = pojazd.getOplata();
+                            pojazdy.remove(pojazd);
+                            return oplata;
+                        }
                     }
+                    throw new NieMaTakiegoSamochoduNaParkingu("ERROR: Pojazd o podanych numerach rejestracyjmych nie znajduje się na parkingu. \n");
+
                 }
+                catch (NieMaTakiegoSamochoduNaParkingu error) {
+                    System.out.println(error.getMessage());
+                }
+
                 return 0.0;
             }
 
@@ -148,8 +176,6 @@ import java.util.Scanner;
                             System.out.println(aktualnyCzas + " -> + " + oIleJednostek + " Sekund -> " + aktualnyCzas.plusSeconds(oIleJednostek));
                             aktualnyCzas = aktualnyCzas.plusSeconds(oIleJednostek);
                             break;
-                        default:
-                            System.out.printf("Podano nieprawidlowo cos");
                     }
                 }
                 catch (NiepoprawnaJednostkaCzasu error) {
