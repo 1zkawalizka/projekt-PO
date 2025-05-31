@@ -23,50 +23,80 @@ import java.util.Scanner;
 
             // Damian Sadowski - Poczatek kodu
             public void zarejestrujWjazd(){
-                Scanner scanner = new Scanner(System.in);
-                System.out.println("Typ pojazdu \n 1. Samochod osobowy \n 2. Ciezarowka \n 3. Motocykl");
-                int typPojazdu = scanner.nextInt();
+                try {
+                    if(sprawdzDostepnosc()){
+                        Scanner scanner = new Scanner(System.in);
+                        System.out.print("Typ pojazdu: \n 1. Samochod osobowy | 2. Ciezarowka | 3. Motocykl : ");
+                        int typPojazdu = scanner.nextInt();
+                        if(!(typPojazdu == 1 || typPojazdu == 2 || typPojazdu == 3)){
+                            throw new PodanoNiepoprawneDaneLubPusty("ERROR: wybrano niewlasciwy typ pojazdu, wybierz pojazd z zakresu 1-3. ");
+                        }
 
-                System.out.println("Numer Rejestracyjny Pojazdu: ");
-                String nrRejestracyjny = scanner.next();
+                        System.out.print("Numer Rejestracyjny Pojazdu: ");
+                        String nrRejestracyjny = scanner.next();
+                        for(Pojazd pojazd : pojazdy){
+                            if(pojazd.getNumerRejestracyjny().equals(nrRejestracyjny)){
+                                throw new TakaRejestracjaJestJuzNaParkingu("ERROR: Samochod o takim numerze rejestracyjnym znajduje sie juz na parkingu, prosimy o zawolwanie obslugi. ");
+                            }
+                        }
 
-                System.out.println("Marka pojazdu: ");
-                String markaPojazdu = scanner.next();
+                        System.out.print("Marka pojazdu: ");
+                        String markaPojazdu = scanner.next();
+                        if(markaPojazdu.isEmpty()){
+                            throw new PodanoNiepoprawneDaneLubPusty("ERROR: Marka pojazdu nie moze byc pusta. ");
+                        }
 
-                System.out.println("Model pojazdu: ");
-                String modelPojazdu = scanner.next();
+                        System.out.print("Model pojazdu: ");
+                        String modelPojazdu = scanner.next();
+                        if(modelPojazdu.isEmpty()){
+                            throw new PodanoNiepoprawneDaneLubPusty("ERROR: Model pojazdu nie moze byc pusty. ");
+                        }
 
-                switch(typPojazdu){
-                    case 1:
-                        System.out.println("Czy posiada LPG? true/false");
-                        boolean czyMaLPG = scanner.nextBoolean();
+                        switch (typPojazdu) {
+                            case 1:
+                                System.out.print("Czy posiada LPG? true/false: ");
+                                boolean czyMaLPG = scanner.nextBoolean();
 
-                        System.out.println("Ilu osobowy? ");
-                        int iluOsobowy = scanner.nextInt();
+                                System.out.print("Ilu osobowy? ");
+                                int iluOsobowy = scanner.nextInt();
 
-                        Pojazd pojazd = new Samochod(nrRejestracyjny, markaPojazdu, modelPojazdu, aktualnyCzas, czyMaLPG, iluOsobowy);
-                        pojazdy.add(pojazd);
-                        break;
-                    case 2:
-                        System.out.println("Jaka wysokosc w cm? ");
-                        double wysokosc = scanner.nextDouble();
+                                Pojazd pojazd = new Samochod(nrRejestracyjny, markaPojazdu, modelPojazdu, aktualnyCzas, czyMaLPG, iluOsobowy);
+                                pojazdy.add(pojazd);
+                                break;
+                            case 2:
+                                System.out.print("Jaka wysokosc w cm? ");
+                                double wysokosc = scanner.nextDouble();
 
-                        System.out.println("Jaka ladownosc? ");
-                        double ladownosc = scanner.nextDouble();
+                                System.out.print("Jaka ladownosc? ");
+                                double ladownosc = scanner.nextDouble();
 
-                        pojazd = new Ciezarowka(nrRejestracyjny, markaPojazdu, modelPojazdu, aktualnyCzas, wysokosc, ladownosc);
-                        pojazdy.add(pojazd);
-                        break;
-                    case 3:
-                        System.out.println("Pojemnosc silnika: ");
-                        int pojemnoscSilnika = scanner.nextInt();
+                                pojazd = new Ciezarowka(nrRejestracyjny, markaPojazdu, modelPojazdu, aktualnyCzas, wysokosc, ladownosc);
+                                pojazdy.add(pojazd);
+                                break;
+                            case 3:
+                                System.out.print("Pojemnosc silnika: ");
+                                int pojemnoscSilnika = scanner.nextInt();
 
-                        System.out.println("Typ? cross/sportowy/scigacz");
-                        String typ = scanner.next();
+                                System.out.print("Typ? cross/sportowy/scigacz: ");
+                                String typ = scanner.next();
 
-                        pojazd = new Motocykl(nrRejestracyjny,markaPojazdu, modelPojazdu, aktualnyCzas, pojemnoscSilnika, typ);
-                        pojazdy.add(pojazd);
-                        break;
+                                pojazd = new Motocykl(nrRejestracyjny, markaPojazdu, modelPojazdu, aktualnyCzas, pojemnoscSilnika, typ);
+                                pojazdy.add(pojazd);
+                                break;
+                        }
+                    }
+                    else{
+                        throw new BrakMiejscaNaParkingu("ERROR: Brak miejsc na parkingu sprobuj ponownie pozniej. ");
+                    }
+                }
+                catch(BrakMiejscaNaParkingu error){
+                    System.out.println(error.getMessage());
+                }
+                catch(TakaRejestracjaJestJuzNaParkingu error){
+                    System.out.println(error.getMessage());
+                }
+                catch(PodanoNiepoprawneDaneLubPusty error){
+                    System.out.println(error.getMessage());
                 }
             }
 
@@ -83,40 +113,82 @@ import java.util.Scanner;
             }
 
             public void przesunCzas(){
-                Scanner scanner = new Scanner(System.in);
-                System.out.printf("Jaka jednostka czasu? \n 1. Rok \n 2. Miesiac \n 3. Dzien \n 4. Godzina \n 5. Minuta \n 6. Sekunda \n\n");
-                int wyborJednostkiCzasu = scanner.nextInt();
-                System.out.printf("O ile jednostek? ");
-                int oIleJednostek = scanner.nextInt();
-                switch (wyborJednostkiCzasu){
-                    case 1:
-                        System.out.println(aktualnyCzas + " -> + " + oIleJednostek + " Lat -> " + aktualnyCzas.plusYears(oIleJednostek));
-                        aktualnyCzas = aktualnyCzas.plusYears(oIleJednostek);
-                        break;
-                    case 2:
-                        System.out.println(aktualnyCzas + " -> + " + oIleJednostek + " Miesiecy -> " + aktualnyCzas.plusMonths(oIleJednostek));
-                        aktualnyCzas = aktualnyCzas.plusMonths(oIleJednostek);
-                        break;
-                    case 3:
-                        System.out.println(aktualnyCzas + " -> + " + oIleJednostek + " Dni-> " + aktualnyCzas.plusDays(oIleJednostek));
-                        aktualnyCzas = aktualnyCzas.plusDays(oIleJednostek);
-                        break;
-                    case 4:
-                        System.out.println(aktualnyCzas + " -> + " + oIleJednostek + " Godzin -> " + aktualnyCzas.plusHours(oIleJednostek));
-                        aktualnyCzas = aktualnyCzas.plusHours(oIleJednostek);
-                        break;
-                    case 5:
-                        System.out.println(aktualnyCzas + " -> + " + oIleJednostek + " Minut -> " + aktualnyCzas.plusMinutes(oIleJednostek));
-                        aktualnyCzas = aktualnyCzas.plusMinutes(oIleJednostek);
-                        break;
-                    case 6:
-                        System.out.println(aktualnyCzas + " -> + " + oIleJednostek + " Sekund -> " + aktualnyCzas.plusSeconds(oIleJednostek));
-                        aktualnyCzas = aktualnyCzas.plusSeconds(oIleJednostek);
-                        break;
-                    default:
-                        System.out.printf("Podano nieprawidlowo cos");
+                try {
+                    Scanner scanner = new Scanner(System.in);
+                    System.out.printf("Jaka jednostka czasu? \n 1. Rok | 2. Miesiac | 3. Dzien | 4. Godzina | 5. Minuta | 6. Sekunda : ");
+                    int wyborJednostkiCzasu = scanner.nextInt();
+                    if(!(wyborJednostkiCzasu >=1 && wyborJednostkiCzasu <= 6)){
+                        throw new NiepoprawnaJednostkaCzasu("ERROR: Podano niepoprawna jednostke czasu, wybierz liczbe z zakresu 1-6. ");
+                    };
+
+                    System.out.printf("O ile jednostek? ");
+                    int oIleJednostek = scanner.nextInt();
+                    switch (wyborJednostkiCzasu) {
+                        case 1:
+                            System.out.println(aktualnyCzas + " -> + " + oIleJednostek + " Lat -> " + aktualnyCzas.plusYears(oIleJednostek));
+                            aktualnyCzas = aktualnyCzas.plusYears(oIleJednostek);
+                            break;
+                        case 2:
+                            System.out.println(aktualnyCzas + " -> + " + oIleJednostek + " Miesiecy -> " + aktualnyCzas.plusMonths(oIleJednostek));
+                            aktualnyCzas = aktualnyCzas.plusMonths(oIleJednostek);
+                            break;
+                        case 3:
+                            System.out.println(aktualnyCzas + " -> + " + oIleJednostek + " Dni-> " + aktualnyCzas.plusDays(oIleJednostek));
+                            aktualnyCzas = aktualnyCzas.plusDays(oIleJednostek);
+                            break;
+                        case 4:
+                            System.out.println(aktualnyCzas + " -> + " + oIleJednostek + " Godzin -> " + aktualnyCzas.plusHours(oIleJednostek));
+                            aktualnyCzas = aktualnyCzas.plusHours(oIleJednostek);
+                            break;
+                        case 5:
+                            System.out.println(aktualnyCzas + " -> + " + oIleJednostek + " Minut -> " + aktualnyCzas.plusMinutes(oIleJednostek));
+                            aktualnyCzas = aktualnyCzas.plusMinutes(oIleJednostek);
+                            break;
+                        case 6:
+                            System.out.println(aktualnyCzas + " -> + " + oIleJednostek + " Sekund -> " + aktualnyCzas.plusSeconds(oIleJednostek));
+                            aktualnyCzas = aktualnyCzas.plusSeconds(oIleJednostek);
+                            break;
+                        default:
+                            System.out.printf("Podano nieprawidlowo cos");
+                    }
+                }
+                catch (NiepoprawnaJednostkaCzasu error) {
+                    System.out.println(error.getMessage());
                 }
             }
+
+            public class BrakMiejscaNaParkingu extends Exception {
+                public BrakMiejscaNaParkingu(String komunikat) {
+                    super(komunikat);
+                }
+            }
+
+            public class TakaRejestracjaJestJuzNaParkingu extends Exception {
+                public TakaRejestracjaJestJuzNaParkingu(String komunikat) {
+                    super(komunikat);
+                }
+            }
+
+            public class PodanoNiepoprawneDaneLubPusty extends Exception {
+                public PodanoNiepoprawneDaneLubPusty(String komunikat) {
+                    super(komunikat);
+                }
+            }
+
+            public class NieMaTakiegoSamochoduNaParkingu extends Exception {
+                public NieMaTakiegoSamochoduNaParkingu(String komunikat) {
+                    super(komunikat);
+                }
+            }
+
+            public class NiepoprawnaJednostkaCzasu extends Exception {
+                public NiepoprawnaJednostkaCzasu(String komunikat) {
+                    super(komunikat);
+                }
+            }
+
+
+
             // Damian Sadowski - Koniec kodu
 
             // PAULINA CHOJNOWSKA POCZATEK KODU
@@ -168,14 +240,7 @@ import java.util.Scanner;
         int wybor;
         do {
             System.out.println("Co chcesz zrobic? \n " +
-                    "1. Wjazd \n " +
-                    "2. Wyjazd \n " +
-                    "3. Sprawdz Dostepnosc \n " +
-                    "4. Lista aktualnych pojazdow \n " +
-                    "5. Generuj raport dzienny \n " +
-                    "6. Przesun czas symulacji \n " +
-                    "7. Historia pojazdow \n " +
-                    "0. Wyjdz");
+                    "1. Wjazd | " + "2. Wyjazd | " + "3. Sprawdz Dostepnosc | " + "4. Lista aktualnych pojazdow | " + "5. Generuj raport dzienny | " + "6. Przesun czas symulacji | " + "7. Historia pojazdow | " + "0. Wyjdz : ");
             wybor = scanner.nextInt();
             switch (wybor) {
                 case 1:
