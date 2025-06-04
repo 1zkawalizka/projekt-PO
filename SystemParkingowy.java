@@ -348,7 +348,20 @@ import java.util.Scanner;
                     try {
                         System.out.println("Aktualne pojazdy:");
                         for (Pojazd p : systemParkingowy.pobierzAktualnePojazdy()) {
-                            System.out.println("- " + p.getNumerRejestracyjny());
+                            String typ;
+                            if (p instanceof Samochod) {
+                                typ = "Samochód osobowy";
+                            }
+                            else if (p instanceof Ciezarowka) {
+                                typ = "Ciężarówka";
+                            }
+                            else if (p instanceof Motocykl) {
+                                typ = "Motocykl";
+                            }
+                            else {
+                                typ = "Nieznany typ";
+                            }
+                            System.out.println("- Typ: " + typ + ", Numer rejestracyjny: " + p.getNumerRejestracyjny() + ", Model: " + p.getModel() + ", Marka: " + p.getMarka() + ", Czas wjazdu: " + p.getCzasWjazdu());
                         }
                     } catch (SystemParkingowy.BladPobieraniaPojazdow e) {
                         System.out.println(e.getMessage());
@@ -356,11 +369,6 @@ import java.util.Scanner;
 
                     break;
                 case 5:
-                    try {
-                        System.out.println(systemParkingowy.generujRaportDzienny());
-                    } catch (SystemParkingowy.BladGenerowaniaRaportu e) {
-                        System.out.println(e.getMessage());
-                    }
                     try {
                         System.out.println(systemParkingowy.generujRaportDzienny());
                     } catch (SystemParkingowy.BladGenerowaniaRaportu e) {
