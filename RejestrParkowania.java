@@ -1,4 +1,3 @@
-import java.time.Duration;
 import java.time.LocalDateTime;
 
 
@@ -29,7 +28,7 @@ public class RejestrParkowania {
     }
 
     public double getOplata() {
-        return oplata;
+        return pojazd.getOplata();
     }
 
     public static void main(String[] args) {

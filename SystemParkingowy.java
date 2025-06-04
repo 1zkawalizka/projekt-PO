@@ -1,7 +1,6 @@
 import java.util.List;
 import java.util.ArrayList;
 import java.time.LocalDateTime;
-import java.time.Duration;
 import java.util.Scanner;
 
         public class SystemParkingowy {
@@ -69,6 +68,7 @@ import java.util.Scanner;
 
                                 Pojazd pojazd = new Samochod(nrRejestracyjny, markaPojazdu, modelPojazdu, aktualnyCzas, czyMaLPG, iluOsobowy);
                                 pojazdy.add(pojazd);
+                                historia.add(new RejestrParkowania(pojazd));
                                 break;
                             case 2:
                                 System.out.print("Jaka wysokosc w cm? ");
@@ -85,6 +85,7 @@ import java.util.Scanner;
 
                                 pojazd = new Ciezarowka(nrRejestracyjny, markaPojazdu, modelPojazdu, aktualnyCzas, wysokosc, ladownosc);
                                 pojazdy.add(pojazd);
+                                historia.add(new RejestrParkowania(pojazd));
                                 break;
                             case 3:
                                 System.out.print("Pojemnosc silnika: ");
@@ -102,6 +103,7 @@ import java.util.Scanner;
 
                                 pojazd = new Motocykl(nrRejestracyjny, markaPojazdu, modelPojazdu, aktualnyCzas, pojemnoscSilnika, typ);
                                 pojazdy.add(pojazd);
+                                historia.add(new RejestrParkowania(pojazd));
                                 break;
                         }
                     }
@@ -120,7 +122,7 @@ import java.util.Scanner;
                 }
             }
 
-            public double zarejestrujWyjazd(String nrRejestracyjny){
+            public double zarejestrujWyjazd(String nrRejestracyjny) {
                 try {
                     for (Pojazd pojazd : pojazdy) {
                         if (pojazd.getNumerRejestracyjny().equals(nrRejestracyjny)) {
@@ -130,15 +132,15 @@ import java.util.Scanner;
                             return oplata;
                         }
                     }
-                    throw new NieMaTakiegoSamochoduNaParkingu("ERROR: Pojazd o podanych numerach rejestracyjmych nie znajduje się na parkingu. \n");
+                    throw new NieMaTakiegoSamochoduNaParkingu("ERROR: Pojazd o podanych numerach rejestracyjnych nie znajduje się na parkingu.\n");
 
-                }
-                catch (NieMaTakiegoSamochoduNaParkingu error) {
+                } catch (NieMaTakiegoSamochoduNaParkingu error) {
                     System.out.println(error.getMessage());
                 }
 
                 return 0.0;
             }
+
 
             public void przesunCzas(){
                 try {
@@ -222,42 +224,103 @@ import java.util.Scanner;
                 return pojazdy.size() < pojemność;
             }
 
-            public List<Pojazd> pobierzAktualnePojazdy() {
-                return new ArrayList<>(pojazdy);
-            }
-
-            public String generujRaportDzienny() {
-                String raport = "";
-
-                raport += "Raport dzienny\n";
-                raport += "Data: " + aktualnyCzas.toLocalDate() + "\n";
-
-                raport += "Zajęte miejsca: " + pojazdy.size() + "\n";
-                raport += "Wolne miejsca: " + (pojemność - pojazdy.size()) + "\n\n";
-
-                raport += "Zaparkowane pojazdy:\n";
-                for (Pojazd p : pojazdy) {
-                    raport += "- " + p.getNumerRejestracyjny() + " " + p.getMarka() + " " + p.getModel() + "\n";
+            public List<Pojazd> pobierzAktualnePojazdy() throws BladPobieraniaPojazdow {
+                try {
+                    return new ArrayList<>(pojazdy);
+                } catch (Exception e) {
+                    throw new BladPobieraniaPojazdow("Błąd podczas pobierania pojazdów: " + e.getMessage());
                 }
-                return raport;
             }
+
+
+
+
+            public String generujRaportDzienny() throws BladGenerowaniaRaportu {
+                try {
+                    String raport = "";
+
+                    raport += "Raport dzienny\n";
+                    raport += "Data: " + aktualnyCzas.toLocalDate() + "\n";
+
+                    raport += "Zajęte miejsca: " + pojazdy.size() + "\n";
+                    raport += "Wolne miejsca: " + (pojemność - pojazdy.size()) + "\n\n";
+
+                    raport += "Zaparkowane pojazdy:\n";
+                    for (Pojazd p : pojazdy) {
+                        raport += "- " + p.getNumerRejestracyjny() + " " + p.getMarka() + " " + p.getModel() + "\n";
+                    }
+                    return raport;
+
+                } catch (Exception e) {
+                    throw new BladGenerowaniaRaportu("Błąd podczas generowania raportu dziennego: " + e.getMessage());
+                }
+            }
+
 
             public void wyswietlHistorie() {
-                if (historia.isEmpty()) {
-                    System.out.println("Brak historii parkowania.");
-                    return;
-                }
+                try {
+                    if (historia.isEmpty()) {
+                        throw new PustaHistoriaException("Brak historii parkowania.");
+                    }
 
-                System.out.println("Historia parkowania:");
-                for (RejestrParkowania rejestr : historia) {
-                    System.out.println(
-                            rejestr.getPojazd().getNumerRejestracyjny() +
-                                    " - Wjazd: " + rejestr.getCzasWjazdu() +
-                                    ", Wyjazd: " + rejestr.getCzasWyjazdu() +
-                                    ", Opłata: " + rejestr. getOplata() + " zł"
-                    );
+                    System.out.println("Historia parkowania:");
+
+                    for (RejestrParkowania rejestr : historia) {
+                        Pojazd p = rejestr.getPojazd();
+                        String typPojazdu;
+
+                        if (p instanceof Samochod) {
+                            typPojazdu = "Samochód osobowy";
+                        } else if (p instanceof Motocykl) {
+                            typPojazdu = "Motocykl";
+                        } else if (p instanceof Ciezarowka) {
+                            typPojazdu = "Ciężarówka";
+                        } else {
+                            typPojazdu = "Nieznany typ";
+                        }
+
+                        String statusWyjazdu;
+                        LocalDateTime czasWyjazdu = p.getCzasWyjazdu();
+
+                        if (czasWyjazdu == null) {
+                            statusWyjazdu = "WYJECHAŁ: NIE (nadal zaparkowany)";
+                        } else {
+                            statusWyjazdu = "WYJECHAŁ: TAK, o " + czasWyjazdu;
+                        }
+
+                        System.out.println(
+                                "Typ: " + typPojazdu +
+                                        ", Rejestracja: " + p.getNumerRejestracyjny() +
+                                        ", Marka: " + p.getMarka() +
+                                        ", Model: " + p.getModel() +
+                                        ", WJAZD: " + p.getCzasWjazdu() +
+                                        ", " + statusWyjazdu +
+                                        ", Opłata: " + rejestr.getOplata() + " zł"
+                        );
+                    }
+
+                } catch (PustaHistoriaException e) {
+                    System.out.println(e.getMessage());
+                } catch (Exception e) {
+                    System.out.println("Wystąpił nieoczekiwany błąd podczas wyświetlania historii: " + e.getMessage());
                 }
             }
+            public class PustaHistoriaException extends Exception {
+                public PustaHistoriaException(String komunikat) {
+                    super(komunikat);
+                }
+            }
+            public class BladGenerowaniaRaportu extends Exception {
+                public BladGenerowaniaRaportu(String komunikat) {
+                    super(komunikat);
+                }
+            }
+            public class BladPobieraniaPojazdow extends Exception {
+                public BladPobieraniaPojazdow(String komunikat) {
+                    super(komunikat);
+                }
+            }
+
             // PAULINA CHOJNOWSKA KONIEC KODU
 
     public static void main(String[] args) {
@@ -282,13 +345,28 @@ import java.util.Scanner;
                             (systemParkingowy.sprawdzDostepnosc() ? "TAK" : "NIE"));
                     break;
                 case 4:
-                    System.out.println("Aktualne pojazdy:");
-                    for (Pojazd p : systemParkingowy.pobierzAktualnePojazdy()) {
-                        System.out.println("- " + p.getNumerRejestracyjny());
+                    try {
+                        System.out.println("Aktualne pojazdy:");
+                        for (Pojazd p : systemParkingowy.pobierzAktualnePojazdy()) {
+                            System.out.println("- " + p.getNumerRejestracyjny());
+                        }
+                    } catch (SystemParkingowy.BladPobieraniaPojazdow e) {
+                        System.out.println(e.getMessage());
                     }
+
                     break;
                 case 5:
-                    System.out.println(systemParkingowy.generujRaportDzienny());
+                    try {
+                        System.out.println(systemParkingowy.generujRaportDzienny());
+                    } catch (SystemParkingowy.BladGenerowaniaRaportu e) {
+                        System.out.println(e.getMessage());
+                    }
+                    try {
+                        System.out.println(systemParkingowy.generujRaportDzienny());
+                    } catch (SystemParkingowy.BladGenerowaniaRaportu e) {
+                        System.out.println(e.getMessage());
+                    }
+
                     break;
                 case 6:
                     systemParkingowy.przesunCzas();
